@@ -6,6 +6,7 @@ description: "Mount container-storage in a btrfs loopback for space restrained e
 
 inputs:
   target-dir:
+    deprecationMessage: "Now target dirs are hardcoded"
     description: "Path to the container-storage directory. Defaults to the user container-storage (~/.local/share/containers)"
     required: false
     default: ""
@@ -24,7 +25,6 @@ runs:
     - name: Mount BTRFS loopback
       shell: bash
       env:
-        BTRFS_TARGET_DIR: "${{ inputs.target-dir || '' }}"
         BTRFS_MOUNT_OPTS: "${{ inputs.mount-opts || '' }}"
         BTRFS_LOOPBACK_FREE: "${{ inputs.loopback-free || '0.8' }}"
       run: ${{ github.action_path }}/mount_btrfs.sh
