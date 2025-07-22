@@ -50,13 +50,16 @@ mounts=(
     [podman_rootless]=$(podman system info --format '{{.Store.GraphRoot}}' | sed 's|/storage$||')
 )
 
-mkdir -p "$(podman system info --format '{{.Store.GraphRoot}}')" # Create podman local container storage beforehand
-sudo mkdir -p "/var/lib/containers/storage"                      # Create podman rootful container storage beforehand
+mkdir -p "$(podman system info --format '{{.Store.GraphRoot}}' |
+    sed 's|/storage$||')"                   # Create podman local container storage beforehand
+sudo mkdir -p "/var/lib/containers/storage" # Create podman rootful container storage beforehand
 
 for dir in "${!mounts[@]}"; do
     sudo btrfs subvolume create "$_LOOPBACK_MOUNT/$dir"
     mkdir -p "${mounts[$dir]}" || :
+    sudo chmod 755 "${mounts[$dir]}" || :
     sudo mount --bind "$_LOOPBACK_MOUNT/$dir" "${mounts[$dir]}"
+    sudo chmod 755 "${mounts[$dir]}" || :
 done
 
 sudo umount "$_LOOPBACK_MOUNT"
