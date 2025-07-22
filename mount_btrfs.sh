@@ -1,6 +1,11 @@
 #!/bin/bash
 
-set -exo pipefail
+set -eo pipefail
+
+if [[ ${RUNNER_DEBUG:-0} -eq 1 ]]; then
+    echo "Debug mode enabled"
+    set -x
+fi
 
 # Options used to mount
 BTRFS_MOUNT_OPTS=${BTRFS_MOUNT_OPTS:-"compress-force=zstd:2"}
